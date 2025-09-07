@@ -68,4 +68,4 @@ Expected output: Solutions `x1=1, x2=2, x3=-1` for direct methods; iterative met
 Tested with 2×2, 3×3, and 4×4 systems, including diagonally dominant, symmetric positive definite, and singular matrices. See the LaTeX report for sample results.
 
 ## License
-MIT License (if applicable, update based on your choice).
+MIT License.
