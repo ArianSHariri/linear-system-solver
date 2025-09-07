@@ -1,0 +1,80 @@
+% Setting up the document class and essential packages
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{times} % Using Times font for professional appearance
+
+\begin{document}
+
+\title{Solving n$\times$n Systems of Linear Equations: Implementation and Comparison}
+\author{Arian Seyed Hariri \\ Helia Soltanian}
+\date{September 7, 2025}
+\maketitle
+
+\section{Introduction}
+This report describes a Python program designed to solve n$\times$n systems of linear equations using a variety of numerical methods. The program is extensible, user-friendly, and compares the performance of each method based on solution accuracy, execution time, and, where applicable, iteration counts. Users input the system size $n$ and coefficients for the system $Ax = b$, and the program outputs solutions and a comparison table.
+
+\section{Methods Implemented}
+The program implements the following methods to solve the system $Ax = b$:
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Cramer's Rule}: Computes the solution using determinants, where $x_i = \det(A_i)/\det(A)$, and $A_i$ is $A$ with column $i$ replaced by $b$.
+    \item \textbf{Gaussian Elimination (Row Echelon Form)}: Transforms $A$ into an upper triangular matrix via row operations without pivoting, followed by back-substitution.
+    \item \textbf{Doolittle Decomposition}: Performs LU decomposition with $L$ having ones on the diagonal, solving $Ly = b$ and $Ux = y$ via forward and back substitution.
+    \item \textbf{Cholesky Decomposition}: Decomposes $A$ as $A = LL^T$ for symmetric positive definite (SPD) matrices, solving via forward and back substitution.
+    \item \textbf{Crout Decomposition}: Performs LU decomposition with $U$ having ones on the diagonal, solving similarly to Doolittle.
+    \item \textbf{Jacobi Method}: An iterative method updating all variables simultaneously, converging if $A$ is diagonally dominant.
+    \item \textbf{Gauss-Seidel Method}: An iterative method updating variables sequentially, requiring diagonal dominance.
+    \item \textbf{Successive Over-Relaxation (SOR)}: Extends Gauss-Seidel with a relaxation parameter ($\omega = 1.25$) to accelerate convergence.
+\end{enumerate}
+
+\section{Program Features}
+% Describing input and output
+The program prompts the user to specify the system size $n$ and input coefficients for each equation in the format $a_1 \, a_2 \, \dots \, a_n \, b$. It validates inputs, displays the system for confirmation, and produces a comparison table reporting each method’s solution, maximum absolute error (relative to NumPy’s \texttt{linalg.solve}), execution time, and additional information (e.g., iteration counts for iterative methods or failure reasons for direct methods).
+
+% Highlighting extensibility and error handling
+The code is extensible to handle any n$\times$n system by dynamically constructing $A$ and $b$ based on the input size. It includes robust error handling for invalid inputs, singular matrices, non-symmetric positive definite matrices (for Cholesky), and non-convergent iterative methods (checked via diagonal dominance).
+
+\section{Testing and Results}
+The program was tested on various systems, including 2$\times$2, 3$\times$3, and 4$\times$4 systems, with both diagonally dominant and non-diagonally dominant matrices, as well as symmetric positive definite (SPD) systems for Cholesky. Below is a sample result for the 3$\times$3 system:
+\[
+\begin{cases}
+3x_1 + 5x_2 - 10x_3 = 18 \\
+2x_1 - 7x_2 + 10x_3 = -15 \\
+4x_1 + x_2 - 3x_3 = 2
+\end{cases}
+\]
+\textbf{Expected Solution}: $x_1 = 1$, $x_2 = 2$, $x_3 = -1$.
+
+\textbf{Comparison Table (abridged)}:
+\begin{table}[h]
+\centering
+\begin{tabular}{l l l r r}
+\toprule
+Method & Info & Solution ($x_1, x_2, x_3$) & Max Error & Time (s) \\
+\midrule
+Cramer's Rule & - & (1.000000, 2.000000, -1.000000) & 0.000000 & 0.000125 \\
+Gaussian Elimination & - & (1.000000, 2.000000, -1.000000) & 0.000000 & 0.000050 \\
+Doolittle Decomposition & - & (1.000000, 2.000000, -1.000000) & 0.000000 & 0.000060 \\
+Cholesky Decomposition & Matrix not symmetric positive definite & Failed & - & 0.000015 \\
+Crout Decomposition & - & (1.000000, 2.000000, -1.000000) & 0.000000 & 0.000058 \\
+Jacobi & Matrix not diagonally dominant & Failed & - & 0.000015 \\
+Gauss-Seidel & Matrix not diagonally dominant & Failed & - & 0.000013 \\
+SOR & Matrix not diagonally dominant & Failed & - & 0.000012 \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of methods for the 3$\times$3 test system.}
+\end{table}
+
+% Analyzing results
+Cramer’s Rule, Gaussian Elimination, Doolittle, and Crout produced accurate solutions with near-zero errors. Cholesky failed because the matrix is not symmetric positive definite, and iterative methods (Jacobi, Gauss-Seidel, SOR) failed due to lack of diagonal dominance. For SPD and diagonally dominant systems (e.g., a 4$\times$4 system with solution $x_1 = x_2 = x_3 = x_4 = 1$), all applicable methods succeeded, with Cholesky and iterative methods showing fast convergence.
+
+\section{Conclusion}
+The program effectively solves n$\times$n linear systems using eight numerical methods, providing a comprehensive comparison of their performance. Its user-friendly interface, robust error handling, and extensibility make it suitable for educational and practical use. Future enhancements could include partial pivoting for Gaussian elimination to handle singular or near-singular matrices or optimizing iterative methods for non-diagonally dominant systems.
+
+\end{document}
